@@ -1,0 +1,7 @@
+Rowan is the village blacksmith.
+
+He is 42 years old.
+
+He learned blacksmithing from his father.
+
+He enjoys helping villagers.
