@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
                 float y = (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) ? 1 : (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) ? -1 : 0;
                 inputVector = new Vector2(x, y);
             }
-            transform.position += new Vector3(inputVector.x, inputVector.y, 0) * speed * Time.deltaTime;
+            transform.position += speed * Time.deltaTime * new Vector3(inputVector.x, inputVector.y, 0);
         }
     }
 

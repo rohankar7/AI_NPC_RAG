@@ -31,9 +31,7 @@ public class BackendClient : MonoBehaviour
         unityWebRequest.uploadHandler = new UploadHandlerRaw(body);
         unityWebRequest.downloadHandler = new DownloadHandlerBuffer();
         unityWebRequest.SetRequestHeader("Content-Type", "application/json");
-        //Debug.Log("Sending: " + json);
         yield return unityWebRequest.SendWebRequest();
-        //Debug.Log("Response: " + unityWebRequest.downloadHandler.text);
         if (unityWebRequest.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError(unityWebRequest.error);
