@@ -33,7 +33,7 @@ public class DialogueUI : MonoBehaviour
     public void SendPlayerMessage()
     {
         playerMessage = inputField.text;
-        Debug.Log(playerMessage);
+        //Debug.Log(playerMessage);
         inputField.text = string.Empty;
         sendButton.interactable = false;
     }

@@ -9,4 +9,4 @@ llm = LLMService()
 
 def chat(request: ChatRequest):
     # return ChatResponse(reply=f"NPC says: You said `{request.message}`")
-    return ChatResponse(reply=llm.chat(request.message))
+    return ChatResponse(reply=llm.chat(request.message, request.npc_id))

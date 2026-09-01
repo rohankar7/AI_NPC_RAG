@@ -10,21 +10,23 @@ public class BackendClient : MonoBehaviour
     [Serializable] private class ChatRequest
     {
         public string message;
+        public string npc_id;
     }
     [Serializable] public class ChatResponse
     {
         public string reply;
     }
 
-    public void SendMessage(string message, Action<string> onSuccess)
+    public void SendMessage(string message, string npc_id, Action<string> onSuccess)
     {
-        StartCoroutine(PostMessage(message, onSuccess));
+        StartCoroutine(PostMessage(message, npc_id, onSuccess));
     }
 
-    private IEnumerator PostMessage(string message, Action<string> onSuccess)
+    private IEnumerator PostMessage(string message, string npc_id, Action<string> onSuccess)
     {
         ChatRequest chatRequest = new ChatRequest();
         chatRequest.message = message;
+        chatRequest.npc_id = npc_id;
         string json = JsonUtility.ToJson(chatRequest);
         UnityWebRequest unityWebRequest = new UnityWebRequest(backendURL, "POST");
         byte[] body = Encoding.UTF8.GetBytes(json);

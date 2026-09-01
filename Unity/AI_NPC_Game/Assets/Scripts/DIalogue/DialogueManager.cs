@@ -10,12 +10,20 @@ public class DialogueManager : MonoBehaviour
     public void Send()
     {
         string message = messageInput.text;
+        messageInput.text = "";
         if (string.IsNullOrWhiteSpace(message))
         {
             return;
         }
         replyText.text = "Thinking...";
-        backend.SendMessage(message, OnReply);
+        try
+        {
+            backend.SendMessage(message, Player.playerInstance.npc_id, OnReply);
+        }
+        catch
+        {
+            Debug.LogError("No npc_id interacting with Player");
+        }
     }
 
     private void OnReply(string reply)
@@ -32,5 +40,6 @@ public class DialogueManager : MonoBehaviour
     public void HideChatUI()
     {
         Player.playerInstance.isTalking = false;
+        replyText.text = "HI !";
     }
 }

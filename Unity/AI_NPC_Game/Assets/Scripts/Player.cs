@@ -1,13 +1,14 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private BoxCollider2D playerCollider;
     private float speed = 0.5f;
     public bool isTalking = false;
     public static Player playerInstance;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public string npc_id = "";
+    [SerializeField] private TMP_Text replyText;
     void Awake()
     {
         if (playerInstance != null && playerInstance != this)
@@ -18,7 +19,6 @@ public class Player : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isTalking)
@@ -42,8 +42,15 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("NPC"))
         {
-            Debug.Log("Ready to talk?");
+            //Debug.Log("Ready to talk?");
+            npc_id = collision.gameObject.name.ToLower();
             isTalking = true;
+            switch (npc_id)
+            {
+                case "blacksmith": replyText.text = "Rowan, the blacksmith"; break;
+                case "merchant": replyText.text = "Mira, the merchant"; break;
+                case "guard": replyText.text = "Alden, the guard"; break;
+            }
         }
     }
 }

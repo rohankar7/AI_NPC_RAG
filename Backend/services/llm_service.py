@@ -21,15 +21,40 @@ class LLMService:
         self.blacksmith_prompt = load_prompt("blacksmith.txt")
         self.merchant_prompt = load_prompt("merchant.txt")
         self.guard_prompt = load_prompt("guard.txt")
-        self.messages = [
-            {
-                "role": "system",
-                "content": self.system_prompt
-            }
-        ]
-    def chat(self, message: str) -> str:
-        memory_result = self.memory_extractor.extract(message)
+        self.conversations = {
+            "blacksmith": [
+                {
+                    "role": "system",
+                    "content": ""
+                }
+            ],
+            "merchant": [
+                {
+                    "role": "system",
+                    "content": ""
+                }
+            ],
+            "guard": [
+                {
+                    "role": "system",
+                    "content": ""
+                }
+            ]
+        }
 
+        self.npcs = {
+            "blacksmith": self.blacksmith_prompt,
+            "merchant": self.merchant_prompt,
+            "guard": self.guard_prompt
+        }
+
+    def chat(self, message: str, npc_id: str) -> str:
+
+
+        npc_prompt = self.npcs[npc_id]
+        messages = self.conversations[npc_id]
+        memory_result = self.memory_extractor.extract(message)
+        print(memory_result)
         memories = self.memory.get_memories()
         if (
             memory_result
@@ -38,14 +63,18 @@ class LLMService:
             and memory_result["memory"] not in memories
         ):
             self.memory.save_memory(memory_result["memory"].strip())
+            print(self.memory.get_memories())
             memories.append(memory_result["memory"].strip())
 
         memory_context = "\n".join(memories)
 
         lore = self.retriever.search(message)
         lore_context = "\n".join(lore)
+        messages[0]["role"] = "system"
+        messages[0]["content"] = f"""
+        {self.system_prompt}
 
-        self.messages[0]["content"] = f"""{self.system_prompt}
+        {npc_prompt}
 
         Known facts about the player:
         {memory_context}
@@ -53,23 +82,23 @@ class LLMService:
         World knowledge:
         {lore_context}
         """
-        self.messages.append({
+        messages.append({
             "role": "user",
             "content": message,  
         })
         response = ollama.chat(
             model = self.model,
-            messages = self.messages
+            messages = messages
         )
         assistant_reply = response['message']['content']
         
-        self.messages.append({
+        messages.append({
             "role": "assistant",
             "content": assistant_reply
         })
-        if len(self.messages) > MAX_HISTORY + 1:
-            self.messages = [
-                self.messages[0],      # Keep system prompt
-                *self.messages[-MAX_HISTORY:]
+        if len(messages) > MAX_HISTORY + 1:
+            messages = [
+                messages[0],      # Keep system prompt
+                *messages[-MAX_HISTORY:]
             ]
         return assistant_reply
